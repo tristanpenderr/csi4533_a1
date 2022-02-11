@@ -6,7 +6,6 @@ import os
 import logging
 from random import randint
 
-
 #variables
 files = sorted(os.listdir('img1'))
 dict = {}
@@ -16,6 +15,28 @@ new_path = "img2"
 color_dict = {}
 img_bounding_boxes = {}
 
+#Object for a bounding
+class Box(object):
+    x1 = 0.
+    x2 = 0.
+    y1 = 0.
+    y2 = 0.
+
+   # constructor for our box 
+    def __init__(self, x, y, h, l):
+        #left
+        self.x1 = x
+        #right
+        self.x2 = x + l
+        #bottom
+        self.y1 = y
+        #top
+        self.y2 = y + h
+
+# function to create a box
+def make_box(x, y, h,l):
+    box = Box(x, y, h , l)
+    return box
 #create temporary matrix to be used in the loop 
 tmp_matrix = []
 tmp_img1 = []
@@ -40,12 +61,13 @@ for i in range(len(files)):
             y1 = int(rectangle_englobantes[j][3])
             l1 = int(rectangle_englobantes[j][4])
             h1 = int(rectangle_englobantes[j][5])
-            if h1 <= l1 : 
-                if files[i] not in img_bounding_boxes : 
-                    img_bounding_boxes[files[i]] = [(x1,y1,l1,h1)]
-                else : 
-                    img_bounding_boxes[files[i]] += [(x1,y1,l1,h1)]
-	
+            if h1 <= l1 and files[i] not in img_bounding_boxes : 
+                img_bounding_boxes[files[i]] = [make_box(x1,y1,l1,h1)]
+            elif h1 <= l1: 
+                img_bounding_boxes[files[i]] += [make_box(x1,y1,l1,h1)]
+            elif files[i] not in img_bounding_boxes :
+                img_bounding_boxes[files[i]] = []
+                
 # function for getting image from dict
 def get_image(img_num)  :
     return cv.imread(dict[img_num])
@@ -53,6 +75,11 @@ def get_image(img_num)  :
 # generate random color 
 def generate_color() : 
     return [randint(0, 255), randint(0, 255), randint(0, 255)]
+
+# function for calculating intersection over union
+def calculate_iou(box1, box2) : 
+    return 0
+
 
 #create new folder for images
 try:
@@ -86,10 +113,24 @@ cv.imwrite('img2/'+rectangle_englobantes[1][0]+'.jpg', img)
 
 
 
+#begin iou calculations 
+for i in range(len(files) - 1) :
+    column = []
+    # hold file names for images to examine
+    img1 = files[i]
+    img2 = files[i + 1]
+    # get bounding box information
+    box_list1 = img_bounding_boxes[img1]
+    box_list2 = img_bounding_boxes[img2]
+    # cycle through bounding boxes for f(x) and f(x + 1)
+    for b in box_list1 :
 
+        row = []
+        for k in box_list2 :
+            
+            break
 
-
-
+            
 
 
 # curr = 1

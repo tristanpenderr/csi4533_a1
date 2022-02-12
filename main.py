@@ -6,6 +6,10 @@ import os
 import logging
 from random import randint
 
+
+# log configuration
+logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
+
 #variables
 files = sorted(os.listdir('img1'))
 dict = {}
@@ -32,6 +36,8 @@ class Box(object):
         self.y1 = y
         #top
         self.y2 = y + h
+
+        self.area = h * l
 
 # function to create a box
 def make_box(x, y, h,l):
@@ -76,9 +82,25 @@ def get_image(img_num)  :
 def generate_color() : 
     return [randint(0, 255), randint(0, 255), randint(0, 255)]
 
-# function for calculating intersection over union
-def calculate_iou(box1, box2) : 
-    return 0
+
+
+def calculate_iou(box1, box2):
+    x1, y1 = max(box1.x1,box2.x1), max(box1.y1,box2.y1)
+    x2, y2 = min(box1.x2, box2.x2), min(box1.y2, box2.y2)
+
+    overlap = 0
+
+    if x2-x1 > 0 and y2-y1 > 0 : 
+        overlap = (x2-x1) * (y2-y1)
+    
+    combined = box1.area + box2.area - overlap
+
+    iou = overlap/combined
+
+    if iou < 0.4 : 
+         return 0
+
+    return iou
 
 
 #create new folder for images
@@ -127,10 +149,11 @@ for i in range(len(files) - 1) :
 
         row = []
         for k in box_list2 :
+            iou = calculate_iou(b,k)
+                       
             
-            break
 
-            
+print(calculate_iou(img_bounding_boxes['000001.jpg'][0],img_bounding_boxes['000001.jpg'][0]))
 
 
 # curr = 1

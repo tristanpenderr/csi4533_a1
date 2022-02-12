@@ -25,7 +25,7 @@ class Box(object):
     y2 = 0.
 
    # constructor for our box 
-    def __init__(self, x, y, h, l):
+    def __init__(self, x, y, l, h):
         #left
         self.x1 = x
         #right
@@ -37,9 +37,12 @@ class Box(object):
 
         self.area = h * l
 
+        self.l1 = l
+        self.h1 = h
+
 # function to create a box
-def make_box(x, y, h,l):
-    box = Box(x, y, h , l)
+def make_box(x, y, l,h):
+    box = Box(x, y, l , h)
     return box
 #create temporary matrix to be used in the loop 
 tmp_matrix = []
@@ -135,10 +138,14 @@ cv.imwrite('img2/'+rectangle_englobantes[1][0]+'.jpg', img)
 
 #begin iou calculations 
 for i in range(len(files) - 1) :
+
     column = []
     # hold file names for images to examine
     img1 = files[i]
     img2 = files[i + 1]
+
+
+    img = cv.imread('img1/'+img2)
     # get bounding box information
     box_list1 = img_bounding_boxes[img1]
     box_list2 = img_bounding_boxes[img2]
@@ -171,8 +178,50 @@ for i in range(len(files) - 1) :
         column[c][r] = -1
         column[~c][r] = 0
     
+    for j in range(len(column)) : 
+        if -1 not in column[j] : 
+            new_color = generate_color()
+            x1 = box_list2[j].x1
+            y1 = box_list2[j].y1
+            l1 = box_list2[j].l1
+            h1 = box_list2[j].h1
+
+
+        else : 
+            x1 = box_list2[j].x1
+            y1 = box_list2[j].y1
+            l1 = box_list2[j].l1
+            h1 = box_list2[j].h1
+
+            orig = box_list1[j]
+            
+            new_color = color_dict[(i+1,orig.x1, orig.y1)]
+            cv.rectangle(img,(int(x1),int(y1+h1)), (int(x1+l1),int(y1)), new_color,3)
+            color_dict[(i+2,x1,y1)] = new_color
+            
+    # for j in range(len(box_list2)) : 
+    #     if -1 not in column[j] : 
+    #         new_color = generate_color()
+    #         x1 = box_list2[j].x1
+    #         y1 = box_list2[j].y1
+    #         l1 = box_list2[j].l1
+    #         h1 = box_list2[j].h1
+    #         cv.rectangle(img,(int(x1),int(y1+h1)), (int(x1+l1),int(y1)), new_color,3)
+    #         color_dict[(i+2,x1,y1)] = new_color
+    #     else : 
+    #         x1 = box_list2[j].x1
+    #         y1 = box_list2[j].y1
+    #         l1 = box_list2[j].l1
+    #         h1 = box_list2[j].h1
+
+    #         orig = box_list1[j]
+            
+    #         new_color = color_dict[(i+1,orig.x1, orig.y1)]
+    #         cv.rectangle(img,(int(x1),int(y1+h1)), (int(x1+l1),int(y1)), new_color,3)
+    #         color_dict[(i+2,x1,y1)] = new_color
     
-    break
+    cv.imwrite('img2/'+img2, img)
+    
     
     
 

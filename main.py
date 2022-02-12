@@ -150,77 +150,74 @@ for i in range(len(files) - 1) :
     box_list1 = img_bounding_boxes[img1]
     box_list2 = img_bounding_boxes[img2]
     # cycle through bounding boxes for f(x) and f(x + 1)
-    for b in range(len(box_list1)) :
+    for b in range(len(box_list2)) :
         row = []
-        for k in range(len(box_list2)) :
+        for k in range(len(box_list1)) :
             max_index = -1
 
-            iou = calculate_iou(box_list1[b],box_list2[k])
+            iou = calculate_iou(box_list1[k],box_list2[b])
             row.append(iou)
-        max_value = max(row)
-        max_index = row.index(max_value)
-        row[~max_index] = 0        
-        column.append(row)
+        if len(row) > 0 : 
+            max_value = max(row)
+            max_index = row.index(max_value)
+            row[~max_index] = 0        
+            column.append(row)
 
-    # find max column
-    max_column = []
-
-    for j in range(len(box_list2)) :
-        max_column.append((0, -1, -1)) 
-
-    for j in range(len(column)) :
-        for k in range(len(column[j])) : 
-            val, c, r = max_column[k]
-            if column[j][k] > val : 
-                max_column[k] = (column[j][k],j, k)
-    for j in max_column : 
-        val, c, r = j 
-        column[c][r] = -1
-        column[~c][r] = 0
     
-    for j in range(len(column)) : 
-        if -1 not in column[j] : 
-            new_color = generate_color()
-            x1 = box_list2[j].x1
-            y1 = box_list2[j].y1
-            l1 = box_list2[j].l1
-            h1 = box_list2[j].h1
+
+    if len(column) > 0 : 
+        # find max column
+        max_column = []
+
+        for j in range(len(box_list1)) :
+            max_column.append((0, -1, -1)) 
+
+        for j in range(len(column)) :
+            for k in range(len(column[j])) : 
+                val, c, r = max_column[k]
+                if column[j][k] > val : 
+                    max_column[k] = (column[j][k],j, k)
+
+        for j in max_column : 
+            val, c, r = j
+            logging.error((val,c,r,len(column))) 
+            column[c][r] = -1
+            column[~c][r] = 0
+
+        for j in range(len(column)) : 
+            if -1 not in column[j] : 
+
+                new_color = generate_color()
+                x1 = box_list2[j].x1
+                y1 = box_list2[j].y1
+                l1 = box_list2[j].l1
+                h1 = box_list2[j].h1
+
+                cv.rectangle(img,(int(x1),int(y1+h1)), (int(x1+l1),int(y1)), new_color,3)
+                color_dict[(i+2,x1,y1)] = new_color            
 
 
-        else : 
-            x1 = box_list2[j].x1
-            y1 = box_list2[j].y1
-            l1 = box_list2[j].l1
-            h1 = box_list2[j].h1
-
-            orig = box_list1[j]
-            
-            new_color = color_dict[(i+1,orig.x1, orig.y1)]
-            cv.rectangle(img,(int(x1),int(y1+h1)), (int(x1+l1),int(y1)), new_color,3)
-            color_dict[(i+2,x1,y1)] = new_color
-            
-    # for j in range(len(box_list2)) : 
-    #     if -1 not in column[j] : 
-    #         new_color = generate_color()
-    #         x1 = box_list2[j].x1
-    #         y1 = box_list2[j].y1
-    #         l1 = box_list2[j].l1
-    #         h1 = box_list2[j].h1
-    #         cv.rectangle(img,(int(x1),int(y1+h1)), (int(x1+l1),int(y1)), new_color,3)
-    #         color_dict[(i+2,x1,y1)] = new_color
-    #     else : 
-    #         x1 = box_list2[j].x1
-    #         y1 = box_list2[j].y1
-    #         l1 = box_list2[j].l1
-    #         h1 = box_list2[j].h1
-
-    #         orig = box_list1[j]
-            
-    #         new_color = color_dict[(i+1,orig.x1, orig.y1)]
-    #         cv.rectangle(img,(int(x1),int(y1+h1)), (int(x1+l1),int(y1)), new_color,3)
-    #         color_dict[(i+2,x1,y1)] = new_color
+            else :
     
-    cv.imwrite('img2/'+img2, img)
+                x1 = box_list2[j].x1
+                y1 = box_list2[j].y1
+                l1 = box_list2[j].l1
+                h1 = box_list2[j].h1
+
+                orig_index = column[j].index(-1)
+                orig = box_list1[orig_index]
+                # logging.error((x1,y1))
+                # logging.error(color_dict)
+
+                new_color = color_dict[(i+1,orig.x1, orig.y1)]
+                cv.rectangle(img,(int(x1),int(y1+h1)), (int(x1+l1),int(y1)), new_color,3)
+                color_dict[(i+2,x1,y1)] = new_color
+                # logging.error("")
+        
+        cv.imwrite('img2/'+img2, img)
+    else : 
+        cv.imwrite('img2/'+img2, img)
+
     
     
     

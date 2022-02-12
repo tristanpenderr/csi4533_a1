@@ -145,14 +145,18 @@ for i in range(len(files) - 1) :
     box_list1 = img_bounding_boxes[img1]
     box_list2 = img_bounding_boxes[img2]
     # cycle through bounding boxes for f(x) and f(x + 1)
-    for b in box_list1 :
+    for b in range(len(box_list1)) :
         row = []
-        for k in box_list2 :
-            iou = calculate_iou(b,k)
-            row.append(iou)
+        for k in range(len(box_list2)) :
+            max_index = -1
 
-        print(row)
-        
+            iou = calculate_iou(box_list1[b],box_list2[k])
+            row.append(iou)        
+        column.append(row)
+
+    
+    break
+
 
 
             

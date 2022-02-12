@@ -1,9 +1,7 @@
-from curses.textpad import rectangle
-from email.mime import image
 import cv2 as cv
-import numpy as np
 import os
 import logging
+import pandas as pd
 from random import randint
 
 
@@ -151,11 +149,32 @@ for i in range(len(files) - 1) :
             max_index = -1
 
             iou = calculate_iou(box_list1[b],box_list2[k])
-            row.append(iou)        
+            row.append(iou)
+        max_value = max(row)
+        max_index = row.index(max_value)
+        row[~max_index] = 0        
         column.append(row)
 
+    # find max column
+    max_column = []
+
+    for j in range(len(box_list2)) :
+        max_column.append((0, -1, -1)) 
+
+    for j in range(len(column)) :
+        for k in range(len(column[j])) : 
+            val, c, r = max_column[k]
+            if column[j][k] > val : 
+                max_column[k] = (column[j][k],j, k)
+    for j in max_column : 
+        val, c, r = j 
+        column[c][r] = -1
+        column[~c][r] = 0
+    
     
     break
+    
+    
 
 
 

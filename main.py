@@ -68,9 +68,9 @@ for i in range(len(files)):
             y1 = int(rectangle_englobantes[j][3])
             l1 = int(rectangle_englobantes[j][4])
             h1 = int(rectangle_englobantes[j][5])
-            if h1 <= l1 and files[i] not in img_bounding_boxes : 
+            if h1 <= (1.25 * l1) and files[i] not in img_bounding_boxes : 
                 img_bounding_boxes[files[i]] = [make_box(x1,y1,l1,h1)]
-            elif h1 <= l1: 
+            elif h1 <= (1.25 * l1): 
                 img_bounding_boxes[files[i]] += [make_box(x1,y1,l1,h1)]
             elif files[i] not in img_bounding_boxes :
                 img_bounding_boxes[files[i]] = []
@@ -125,7 +125,7 @@ for i in range(len(rectangle_englobantes)) :
         h1 = int(rectangle_englobantes[i][5])
         
         # check if height is greater then length -> verify with TA if this is the best way to do this
-        if h1 <= l1 : 
+        if h1 <= (1.25 * l1) : 
             new_color = generate_color()
             cv.rectangle(img,(int(x1),int(y1+h1)), (int(x1+l1),int(y1)), new_color,3)
             color_dict[(1,x1,y1)] = new_color

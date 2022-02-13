@@ -57,7 +57,6 @@ def populate_variables(files):
         for line in d : 
             rectangle_englobantes.append(line.strip("\n").split(','))
 
-
     #populate dict with list of bounding boxes for each picture 
     for i in range(len(files)):
         for j in range(len(rectangle_englobantes)) : 
@@ -93,7 +92,6 @@ def calculate_iou(box1, box2):
          return 0
     return iou
 
-
 #create new folder for images
 def create_folder(new_path):
     try:
@@ -103,12 +101,10 @@ def create_folder(new_path):
     else:
         logging.info("Succesfully created new path")
     
-
 # initialize first image with rectangles
 def first_image_init():
     img = cv.imread(dict[int(rectangle_englobantes[0][0])])
     for i in img_bounding_boxes[files[0]] :
-        print(i.h1)
             # check if height is greater then length -> verify with TA if this is the best way to do this
         if i.h1 <= (1.25 * i.l1) : 
             new_color = generate_color()

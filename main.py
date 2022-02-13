@@ -107,21 +107,14 @@ def create_folder(new_path):
 # initialize first image with rectangles
 def first_image_init():
     img = cv.imread(dict[int(rectangle_englobantes[0][0])])
-    for i in range(len(rectangle_englobantes)) :
-        if rectangle_englobantes[i][0] == str(1):
-            x1 = int(rectangle_englobantes[i][2])
-            y1 = int(rectangle_englobantes[i][3])
-            l1 = int(rectangle_englobantes[i][4])
-            h1 = int(rectangle_englobantes[i][5])
-            
+    for i in img_bounding_boxes[files[0]] :
+        print(i.h1)
             # check if height is greater then length -> verify with TA if this is the best way to do this
-            if h1 <= (1.25 * l1) : 
-                new_color = generate_color()
-                cv.rectangle(img,(int(x1),int(y1+h1)), (int(x1+l1),int(y1)), new_color,3)
-                color_dict[(1,x1,y1)] = new_color
-        else : 
-            break
-
+        if i.h1 <= (1.25 * i.l1) : 
+            new_color = generate_color()
+            cv.rectangle(img,(int(i.x1),int(i.y1+i.h1)), (int(i.x1+i.l1),int(i.y1)), new_color,3)
+            color_dict[(1,i.x1,i.y1)] = new_color
+        
     cv.imwrite('img2/'+rectangle_englobantes[1][0]+'.jpg', img)
 
 #begin iou calculations 
